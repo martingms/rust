@@ -9,7 +9,7 @@ use rustc_span::symbol::{kw, sym, Symbol};
 use rustc_span::Span;
 
 use std::ascii;
-use std::str;
+use std::fmt::Write;
 use tracing::debug;
 
 pub enum LitError {
@@ -165,11 +165,10 @@ impl LitKind {
             }
             LitKind::Str(symbol, ast::StrStyle::Raw(n)) => (token::StrRaw(n), symbol, None),
             LitKind::ByteStr(ref bytes) => {
-                let escaped =
-                    bytes.iter().cloned().flat_map(ascii::escape_default).collect::<Vec<u8>>();
-                // SAFETY: All non-ascii bytes have been escaped by ascii::escape_default,
-                // and are therefore valid utf8
-                let string = unsafe { str::from_utf8_unchecked(&escaped) };
+                let mut string = String::with_capacity(bytes.len());
+                for b in bytes.iter().cloned() {
+                    write!(&mut string, "{}", ascii::escape_default(b)).unwrap();
+                }
                 (token::ByteStr, Symbol::intern(&string), None)
             }
             LitKind::Byte(byte) => {
