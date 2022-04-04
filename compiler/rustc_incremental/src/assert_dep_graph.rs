@@ -122,7 +122,7 @@ impl<'tcx> IfThisChanged<'tcx> {
     fn process_attrs(&mut self, hir_id: hir::HirId) {
         let def_id = self.tcx.hir().local_def_id(hir_id);
         let def_path_hash = self.tcx.def_path_hash(def_id.to_def_id());
-        let attrs = self.tcx.hir().attrs(hir_id);
+        let attrs = self.tcx.hir().normal_attrs(hir_id);
         for attr in attrs {
             if attr.has_name(sym::rustc_if_this_changed) {
                 let dep_node_interned = self.argument(attr);

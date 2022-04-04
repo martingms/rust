@@ -571,11 +571,11 @@ impl<'tcx> LateLintPass<'tcx> for MissingDoc {
         &mut self,
         _cx: &LateContext<'_>,
         attrs: &[ast::Attribute],
-        partitioned_attrs: Option<(&[ast::Attribute], &[ast::Attribute])>,
+        normal_attrs: Option<&[ast::Attribute]>,
     ) {
-        let normal_attrs = partitioned_attrs.map(|(_comments, normal)| normal).unwrap_or(attrs);
+        let attrs = normal_attrs.unwrap_or(attrs);
         let doc_hidden = self.doc_hidden()
-            || normal_attrs.iter().any(|attr| {
+            || attrs.iter().any(|attr| {
                 attr.has_name(sym::doc)
                     && match attr.meta_item_list() {
                         None => false,
@@ -1162,7 +1162,7 @@ declare_lint_pass!(InvalidNoMangleItems => [NO_MANGLE_CONST_ITEMS, NO_MANGLE_GEN
 
 impl<'tcx> LateLintPass<'tcx> for InvalidNoMangleItems {
     fn check_item(&mut self, cx: &LateContext<'_>, it: &hir::Item<'_>) {
-        let attrs = cx.tcx.hir().attrs(it.hir_id());
+        let attrs = cx.tcx.hir().normal_attrs(it.hir_id());
         let check_no_mangle_on_generic_fn = |no_mangle_attr: &ast::Attribute,
                                              impl_generics: Option<&hir::Generics<'_>>,
                                              generics: &hir::Generics<'_>,
@@ -1229,7 +1229,7 @@ impl<'tcx> LateLintPass<'tcx> for InvalidNoMangleItems {
                     if let hir::AssocItemKind::Fn { .. } = it.kind {
                         if let Some(no_mangle_attr) = cx
                             .sess()
-                            .find_by_name(cx.tcx.hir().attrs(it.id.hir_id()), sym::no_mangle)
+                            .find_by_name(cx.tcx.hir().normal_attrs(it.id.hir_id()), sym::no_mangle)
                         {
                             check_no_mangle_on_generic_fn(
                                 no_mangle_attr,
@@ -1918,7 +1918,7 @@ impl<'tcx> LateLintPass<'tcx> for UnnameableTestItems {
             return;
         }
 
-        let attrs = cx.tcx.hir().attrs(it.hir_id());
+        let attrs = cx.tcx.hir().normal_attrs(it.hir_id());
         if let Some(attr) = cx.sess().find_by_name(attrs, sym::rustc_test_marker) {
             cx.struct_span_lint(UNNAMEABLE_TEST_ITEMS, attr.span, |lint| {
                 lint.build("cannot test inner items").emit()

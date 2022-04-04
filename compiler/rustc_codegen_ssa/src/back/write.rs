@@ -436,7 +436,7 @@ pub fn start_async_codegen<B: ExtraBackendMethods>(
     let (coordinator_send, coordinator_receive) = channel();
     let sess = tcx.sess;
 
-    let crate_attrs = tcx.hir().attrs(rustc_hir::CRATE_HIR_ID);
+    let crate_attrs = tcx.hir().normal_attrs(rustc_hir::CRATE_HIR_ID);
     let no_builtins = tcx.sess.contains_name(crate_attrs, sym::no_builtins);
     let is_compiler_builtins = tcx.sess.contains_name(crate_attrs, sym::compiler_builtins);
 

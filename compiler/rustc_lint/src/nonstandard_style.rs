@@ -339,7 +339,7 @@ impl<'tcx> LateLintPass<'tcx> for NonSnakeCase {
             Some(Ident::from_str(name))
         } else {
             cx.sess()
-                .find_by_name(&cx.tcx.hir().attrs(hir::CRATE_HIR_ID), sym::crate_name)
+                .find_by_name(&cx.tcx.hir().normal_attrs(hir::CRATE_HIR_ID), sym::crate_name)
                 .and_then(|attr| attr.meta())
                 .and_then(|meta| {
                     meta.name_value_literal().and_then(|lit| {
@@ -391,7 +391,7 @@ impl<'tcx> LateLintPass<'tcx> for NonSnakeCase {
         _: Span,
         id: hir::HirId,
     ) {
-        let attrs = cx.tcx.hir().attrs(id);
+        let attrs = cx.tcx.hir().normal_attrs(id);
         match &fk {
             FnKind::Method(ident, sig, ..) => match method_context(cx, id) {
                 MethodLateContext::PlainImpl => {
@@ -511,7 +511,7 @@ impl NonUpperCaseGlobals {
 
 impl<'tcx> LateLintPass<'tcx> for NonUpperCaseGlobals {
     fn check_item(&mut self, cx: &LateContext<'_>, it: &hir::Item<'_>) {
-        let attrs = cx.tcx.hir().attrs(it.hir_id());
+        let attrs = cx.tcx.hir().normal_attrs(it.hir_id());
         match it.kind {
             hir::ItemKind::Static(..) if !cx.sess().contains_name(attrs, sym::no_mangle) => {
                 NonUpperCaseGlobals::check_upper_case(cx, "static variable", &it.ident);

@@ -293,7 +293,7 @@ fn is_doc_keyword(s: Symbol) -> bool {
 
 impl<'tcx> LateLintPass<'tcx> for ExistingDocKeyword {
     fn check_item(&mut self, cx: &LateContext<'_>, item: &rustc_hir::Item<'_>) {
-        for attr in cx.tcx.hir().attrs(item.hir_id()) {
+        for attr in cx.tcx.hir().normal_attrs(item.hir_id()) {
             if !attr.has_name(sym::doc) {
                 continue;
             }

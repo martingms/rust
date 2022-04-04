@@ -55,7 +55,7 @@ impl<'tcx> LanguageItemCollector<'tcx> {
     }
 
     fn check_for_lang(&mut self, actual_target: Target, hir_id: HirId) {
-        let attrs = self.tcx.hir().attrs(hir_id);
+        let attrs = self.tcx.hir().normal_attrs(hir_id);
         if let Some((value, span)) = extract(&attrs) {
             match ITEM_REFS.get(&value).cloned() {
                 // Known lang item with attribute on correct target.

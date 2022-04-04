@@ -1656,7 +1656,7 @@ fn compute_object_lifetime_defaults<'tcx>(
             let result = object_lifetime_defaults_for_item(tcx, generics);
 
             // Debugging aid.
-            let attrs = tcx.hir().attrs(item.hir_id());
+            let attrs = tcx.hir().normal_attrs(item.hir_id());
             if tcx.sess.contains_name(attrs, sym::rustc_object_lifetime_default) {
                 let object_lifetime_default_reprs: String = result
                     .iter()

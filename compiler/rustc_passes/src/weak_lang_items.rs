@@ -96,7 +96,7 @@ impl<'a, 'tcx> Context<'a, 'tcx> {
 
 impl<'a, 'tcx, 'v> Visitor<'v> for Context<'a, 'tcx> {
     fn visit_foreign_item(&mut self, i: &hir::ForeignItem<'_>) {
-        let attrs = self.tcx.hir().attrs(i.hir_id());
+        let attrs = self.tcx.hir().normal_attrs(i.hir_id());
         if let Some((lang_item, _)) = lang_items::extract(attrs) {
             self.register(lang_item, i.span);
         }

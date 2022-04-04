@@ -716,7 +716,7 @@ impl<'tcx> Visitor<'tcx> for Checker<'tcx> {
                     // error if all involved types and traits are stable, because
                     // it will have no effect.
                     // See: https://github.com/rust-lang/rust/issues/55436
-                    let attrs = self.tcx.hir().attrs(item.hir_id());
+                    let attrs = self.tcx.hir().normal_attrs(item.hir_id());
                     if let (Some((Stability { level: attr::Unstable { .. }, .. }, span)), _) =
                         attr::find_stability(&self.tcx.sess, attrs, item.span)
                     {

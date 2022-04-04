@@ -446,7 +446,7 @@ impl<'tcx> Visitor<'tcx> for MarkSymbolVisitor<'tcx> {
 }
 
 fn has_allow_dead_code_or_lang_attr(tcx: TyCtxt<'_>, id: hir::HirId) -> bool {
-    let attrs = tcx.hir().attrs(id);
+    let attrs = tcx.hir().normal_attrs(id);
     if tcx.sess.contains_name(attrs, sym::lang) {
         return true;
     }

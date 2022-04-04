@@ -429,7 +429,7 @@ fn check_start_fn_ty(tcx: TyCtxt<'_>, start_def_id: DefId) {
                         error = true;
                     }
 
-                    let attrs = tcx.hir().attrs(start_id);
+                    let attrs = tcx.hir().normal_attrs(start_id);
                     for attr in attrs {
                         if attr.has_name(sym::track_caller) {
                             tcx.sess

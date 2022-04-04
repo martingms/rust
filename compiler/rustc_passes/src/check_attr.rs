@@ -70,7 +70,7 @@ impl CheckAttrVisitor<'_> {
         let mut is_valid = true;
         let mut specified_inline = None;
         let mut seen = FxHashMap::default();
-        let attrs = self.tcx.hir().attrs(hir_id);
+        let attrs = self.tcx.hir().normal_attrs(hir_id);
         for attr in attrs {
             let attr_is_valid = match attr.name_or_empty() {
                 sym::inline => self.check_inline(hir_id, attr, span, target),
@@ -2156,7 +2156,7 @@ fn check_invalid_crate_level_attr(tcx: TyCtxt<'_>, attrs: &[Attribute]) {
 }
 
 fn check_non_exported_macro_for_invalid_attrs(tcx: TyCtxt<'_>, item: &Item<'_>) {
-    let attrs = tcx.hir().attrs(item.hir_id());
+    let attrs = tcx.hir().normal_attrs(item.hir_id());
 
     for attr in attrs {
         if attr.has_name(sym::inline) {

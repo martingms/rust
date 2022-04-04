@@ -48,7 +48,7 @@ impl<'tcx> DiagnosticItemCollector<'tcx> {
 
     fn observe_item(&mut self, def_id: LocalDefId) {
         let hir_id = self.tcx.hir().local_def_id_to_hir_id(def_id);
-        let attrs = self.tcx.hir().attrs(hir_id);
+        let attrs = self.tcx.hir().normal_attrs(hir_id);
         if let Some(name) = extract(attrs) {
             // insert into our table
             collect_item(self.tcx, &mut self.diagnostic_items, name, def_id.to_def_id());

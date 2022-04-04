@@ -57,7 +57,7 @@ impl<'tcx> Visitor<'tcx> for CheckNakedFunctions<'tcx> {
             }
         }
 
-        let attrs = self.tcx.hir().attrs(hir_id);
+        let attrs = self.tcx.hir().normal_attrs(hir_id);
         let naked = attrs.iter().any(|attr| attr.has_name(sym::naked));
         if naked {
             let body = self.tcx.hir().body(body_id);

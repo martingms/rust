@@ -789,7 +789,7 @@ impl<'a, 'tcx> Builder<'a, 'tcx> {
         generator_kind: Option<GeneratorKind>,
     ) -> Builder<'a, 'tcx> {
         let tcx = infcx.tcx;
-        let attrs = tcx.hir().attrs(hir_id);
+        let attrs = tcx.hir().normal_attrs(hir_id);
         // Some functions always have overflow checks enabled,
         // however, they may not get codegen'd, depending on
         // the settings for the crate they are codegened in.

@@ -800,7 +800,7 @@ impl CrateInfo {
             .map(|&c| (c, crate::back::linker::exported_symbols(tcx, c)))
             .collect();
         let local_crate_name = tcx.crate_name(LOCAL_CRATE);
-        let crate_attrs = tcx.hir().attrs(rustc_hir::CRATE_HIR_ID);
+        let crate_attrs = tcx.hir().normal_attrs(rustc_hir::CRATE_HIR_ID);
         let subsystem = tcx.sess.first_attr_value_str_by_name(crate_attrs, sym::windows_subsystem);
         let windows_subsystem = subsystem.map(|subsystem| {
             if subsystem != sym::windows && subsystem != sym::console {

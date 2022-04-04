@@ -95,20 +95,20 @@ pub fn provide(providers: &mut Providers) {
     };
     providers.hir_attrs =
         |tcx, id| tcx.hir_crate(()).owners[id].as_owner().map_or(AttributeMap::EMPTY, |o| &o.attrs);
-    providers.hir_partitioned_attrs = |tcx, id| {
+    providers.hir_normal_attrs = |tcx, id| {
         let hir = tcx.hir();
-        // FIXME: This seems unnecessary, can't we take HirId directly. Also
+        // FIXME: This seems unnecessary, can't we take HirId directly.
         let hir_id = hir.local_def_id_to_hir_id(id);
         let attrs = hir.attrs(hir_id);
 
         let mut partitions = attrs.group_by(|a, b| a.is_doc_comment() == b.is_doc_comment());
         let (p1, p2) = (partitions.next().unwrap_or(&[]), partitions.next().unwrap_or(&[]));
         if p1.len() + p2.len() != attrs.len() {
-            None
-        } else if p1.first().map(|a| a.is_doc_comment()).unwrap_or(true) {
-            Some((p1, p2))
+            tcx.arena.alloc_from_iter(attrs.iter().filter(|a| !a.is_doc_comment()).cloned())
+        } else if p1.first().map(|a| !a.is_doc_comment()).unwrap_or(true) {
+            p1
         } else {
-            Some((p2, p1))
+            p2
         }
     };
     providers.source_span = |tcx, def_id| tcx.resolutions(()).definitions.def_span(def_id);

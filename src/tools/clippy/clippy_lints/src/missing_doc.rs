@@ -99,8 +99,9 @@ impl<'tcx> LateLintPass<'tcx> for MissingDoc {
         &mut self,
         _: &LateContext<'_>,
         attrs: &[ast::Attribute],
-        partitioned_attrs: Option<(&[ast::Attribute], &[ast::Attribute])>,) {
-        let doc_hidden = self.doc_hidden() || is_doc_hidden(partitioned_attrs.map(|(_comments, normal)| normal).unwrap_or(attrs));
+        normal_attrs: Option<&[ast::Attribute]>)
+    {
+        let doc_hidden = self.doc_hidden() || is_doc_hidden(normal_attrs.unwrap_or(attrs));
         self.doc_hidden_stack.push(doc_hidden);
     }
 
