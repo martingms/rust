@@ -567,9 +567,15 @@ impl MissingDoc {
 }
 
 impl<'tcx> LateLintPass<'tcx> for MissingDoc {
-    fn enter_lint_attrs(&mut self, _cx: &LateContext<'_>, attrs: &[ast::Attribute]) {
+    fn enter_lint_attrs(
+        &mut self,
+        _cx: &LateContext<'_>,
+        attrs: &[ast::Attribute],
+        partitioned_attrs: Option<(&[ast::Attribute], &[ast::Attribute])>,
+    ) {
+        let normal_attrs = partitioned_attrs.map(|(_comments, normal)| normal).unwrap_or(attrs);
         let doc_hidden = self.doc_hidden()
-            || attrs.iter().any(|attr| {
+            || normal_attrs.iter().any(|attr| {
                 attr.has_name(sym::doc)
                     && match attr.meta_item_list() {
                         None => false,

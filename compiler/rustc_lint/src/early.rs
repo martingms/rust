@@ -70,7 +70,7 @@ impl<'a, T: EarlyLintPass> EarlyContextAndPass<'a, T> {
 
     fn enter_attrs(&mut self, attrs: &'a [ast::Attribute]) {
         debug!("early context: enter_attrs({:?})", attrs);
-        run_early_pass!(self, enter_lint_attrs, attrs);
+        run_early_pass!(self, enter_lint_attrs, attrs, None);
     }
 
     fn exit_attrs(&mut self, attrs: &'a [ast::Attribute]) {

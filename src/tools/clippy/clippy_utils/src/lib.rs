@@ -119,9 +119,15 @@ pub fn meets_msrv(msrv: Option<&RustcVersion>, lint_msrv: &RustcVersion) -> bool
 #[macro_export]
 macro_rules! extract_msrv_attr {
     ($context:ident) => {
-        fn enter_lint_attrs(&mut self, cx: &rustc_lint::$context<'_>, attrs: &[rustc_ast::ast::Attribute]) {
+        fn enter_lint_attrs(
+            &mut self,
+            cx: &rustc_lint::$context<'_>,
+            attrs: &[rustc_ast::ast::Attribute],
+            partitioned_attrs: Option<(&[rustc_ast::ast::Attribute], &[rustc_ast::ast::Attribute])>
+        ) {
             let sess = rustc_lint::LintContext::sess(cx);
-            match $crate::get_unique_inner_attr(sess, attrs, "msrv") {
+            let normal_attrs = partitioned_attrs.map(|(_comments, normal)| normal).unwrap_or(attrs);
+            match $crate::get_unique_inner_attr(sess, normal_attrs, "msrv") {
                 Some(msrv_attr) => {
                     if let Some(msrv) = msrv_attr.value_str() {
                         self.msrv = $crate::parse_msrv(&msrv.to_string(), Some(sess), Some(msrv_attr.span));

@@ -57,9 +57,10 @@ impl<'tcx, T: LateLintPass<'tcx>> LateContextAndPass<'tcx, T> {
         F: FnOnce(&mut Self),
     {
         let attrs = self.context.tcx.hir().attrs(id);
+        let partitioned_attrs = self.context.tcx.hir().partitioned_attrs(id);
         let prev = self.context.last_node_with_lint_attrs;
         self.context.last_node_with_lint_attrs = id;
-        self.enter_attrs(attrs);
+        self.enter_attrs(attrs, partitioned_attrs);
         f(self);
         self.exit_attrs(attrs);
         self.context.last_node_with_lint_attrs = prev;
@@ -82,9 +83,13 @@ impl<'tcx, T: LateLintPass<'tcx>> LateContextAndPass<'tcx, T> {
         lint_callback!(self, check_mod_post, m, s, n);
     }
 
-    fn enter_attrs(&mut self, attrs: &'tcx [ast::Attribute]) {
+    fn enter_attrs(
+        &mut self,
+        attrs: &'tcx [ast::Attribute],
+        partitioned_attrs: Option<(&'tcx [ast::Attribute], &'tcx [ast::Attribute])>,
+    ) {
         debug!("late context: enter_attrs({:?})", attrs);
-        lint_callback!(self, enter_lint_attrs, attrs);
+        lint_callback!(self, enter_lint_attrs, attrs, partitioned_attrs);
     }
 
     fn exit_attrs(&mut self, attrs: &'tcx [ast::Attribute]) {

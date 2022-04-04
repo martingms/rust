@@ -964,6 +964,13 @@ impl<'hir> Map<'hir> {
         self.tcx.hir_attrs(id.owner).get(id.local_id)
     }
 
+    pub fn partitioned_attrs(
+        self,
+        id: HirId,
+    ) -> Option<(&'hir [ast::Attribute], &'hir [ast::Attribute])> {
+        self.tcx.hir_partitioned_attrs(id.owner)
+    }
+
     /// Gets the span of the definition of the specified HIR node.
     /// This is used by `tcx.get_span`
     pub fn span(self, hir_id: HirId) -> Span {

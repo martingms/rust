@@ -95,8 +95,12 @@ impl MissingDoc {
 impl_lint_pass!(MissingDoc => [MISSING_DOCS_IN_PRIVATE_ITEMS]);
 
 impl<'tcx> LateLintPass<'tcx> for MissingDoc {
-    fn enter_lint_attrs(&mut self, _: &LateContext<'tcx>, attrs: &'tcx [ast::Attribute]) {
-        let doc_hidden = self.doc_hidden() || is_doc_hidden(attrs);
+    fn enter_lint_attrs(
+        &mut self,
+        _: &LateContext<'_>,
+        attrs: &[ast::Attribute],
+        partitioned_attrs: Option<(&[ast::Attribute], &[ast::Attribute])>,) {
+        let doc_hidden = self.doc_hidden() || is_doc_hidden(partitioned_attrs.map(|(_comments, normal)| normal).unwrap_or(attrs));
         self.doc_hidden_stack.push(doc_hidden);
     }
 

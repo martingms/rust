@@ -94,6 +94,10 @@ rustc_queries! {
         desc { |tcx| "HIR owner attributes in `{}`", tcx.def_path_str(key.to_def_id()) }
     }
 
+    query hir_partitioned_attrs(key: LocalDefId) -> Option<(&'tcx [ast::Attribute], &'tcx [ast::Attribute])> {
+        desc { |tcx| "HIR owner partitioned attributes in `{}`", tcx.def_path_str(key.to_def_id()) }
+    }
+
     /// Computes the `DefId` of the corresponding const parameter in case the `key` is a
     /// const argument and returns `None` otherwise.
     ///

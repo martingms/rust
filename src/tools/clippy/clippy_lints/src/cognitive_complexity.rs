@@ -134,7 +134,11 @@ impl<'tcx> LateLintPass<'tcx> for CognitiveComplexity {
         }
     }
 
-    fn enter_lint_attrs(&mut self, cx: &LateContext<'tcx>, attrs: &'tcx [Attribute]) {
+    fn enter_lint_attrs(
+        &mut self,
+        cx: &LateContext<'_>,
+        attrs: &[Attribute],
+        _: Option<(&[Attribute], &[Attribute])>,) {
         self.limit.push_attrs(cx.sess(), attrs, "cognitive_complexity");
     }
     fn exit_lint_attrs(&mut self, cx: &LateContext<'tcx>, attrs: &'tcx [Attribute]) {
