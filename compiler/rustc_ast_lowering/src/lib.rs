@@ -870,15 +870,18 @@ impl<'a, 'hir> LoweringContext<'a, 'hir> {
     }
 
     fn insert_attrs(&mut self, local_id: hir::ItemLocalId, attrs: &'hir [Attribute]) {
-        let mut normal_partitions = attrs
-            .group_by(|a, b| a.is_normal() == b.is_normal())
-            .filter(|p| p.first().map_or(true, |a| a.is_normal()));
+        let mut normal_attrs = None;
+        if attrs.first().map_or(false, |a| a.is_doc_comment()) {
+            let mut normal_partitions = attrs
+                .group_by(|a, b| a.is_normal() == b.is_normal())
+                .filter(|p| p.first().map_or(true, |a| a.is_normal()));
 
-        let mut normal_attrs = normal_partitions.next();
+            normal_attrs = normal_partitions.next();
 
-        // No clean partition
-        if normal_partitions.next().is_some() {
-            normal_attrs = None;
+            // No clean partition
+            if normal_partitions.next().is_some() {
+                normal_attrs = None;
+            }
         }
 
         self.attrs.insert(local_id, (attrs, normal_attrs));
