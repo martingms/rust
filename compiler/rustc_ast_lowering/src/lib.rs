@@ -34,6 +34,7 @@
 #![feature(box_patterns)]
 #![feature(let_else)]
 #![feature(never_type)]
+#![feature(slice_group_by)]
 #![recursion_limit = "256"]
 #![allow(rustc::potential_query_instability)]
 
@@ -105,7 +106,7 @@ struct LoweringContext<'a, 'hir: 'a> {
     /// Bodies inside the owner being lowered.
     bodies: Vec<(hir::ItemLocalId, &'hir hir::Body<'hir>)>,
     /// Attributes inside the owner being lowered.
-    attrs: SortedMap<hir::ItemLocalId, &'hir [Attribute]>,
+    attrs: SortedMap<hir::ItemLocalId, (&'hir [Attribute], Option<&'hir [Attribute]>)>,
 
     generator_kind: Option<hir::GeneratorKind>,
 
@@ -868,6 +869,21 @@ impl<'a, 'hir> LoweringContext<'a, 'hir> {
         ret
     }
 
+    fn insert_attrs(&mut self, local_id: hir::ItemLocalId, attrs: &'hir [Attribute]) {
+        let mut normal_partitions = attrs
+            .group_by(|a, b| a.is_normal() == b.is_normal())
+            .filter(|p| p.first().map_or(true, |a| a.is_normal()));
+
+        let mut normal_attrs = normal_partitions.next();
+
+        // No clean partition
+        if normal_partitions.next().is_some() {
+            normal_attrs = None;
+        }
+
+        self.attrs.insert(local_id, (attrs, normal_attrs));
+    }
+
     fn lower_attrs(&mut self, id: hir::HirId, attrs: &[Attribute]) -> Option<&'hir [Attribute]> {
         if attrs.is_empty() {
             None
@@ -875,7 +891,7 @@ impl<'a, 'hir> LoweringContext<'a, 'hir> {
             debug_assert_eq!(id.owner, self.current_hir_id_owner);
             let ret = self.arena.alloc_from_iter(attrs.iter().map(|a| self.lower_attr(a)));
             debug_assert!(!ret.is_empty());
-            self.attrs.insert(id.local_id, ret);
+            self.insert_attrs(id.local_id, ret);
             Some(ret)
         }
     }
@@ -904,7 +920,7 @@ impl<'a, 'hir> LoweringContext<'a, 'hir> {
         debug_assert_eq!(id.owner, self.current_hir_id_owner);
         debug_assert_eq!(target_id.owner, self.current_hir_id_owner);
         if let Some(&a) = self.attrs.get(&target_id.local_id) {
-            debug_assert!(!a.is_empty());
+            debug_assert!(!a.0.is_empty());
             self.attrs.insert(id.local_id, a);
         }
     }
@@ -2190,7 +2206,7 @@ impl<'a, 'hir> LoweringContext<'a, 'hir> {
 
     fn stmt_let_pat(
         &mut self,
-        attrs: Option<&'hir [Attribute]>,
+        attrs: Option<(&'hir [Attribute], Option<&'hir [Attribute]>)>,
         span: Span,
         init: Option<&'hir hir::Expr<'hir>>,
         pat: &'hir hir::Pat<'hir>,
@@ -2198,7 +2214,7 @@ impl<'a, 'hir> LoweringContext<'a, 'hir> {
     ) -> hir::Stmt<'hir> {
         let hir_id = self.next_id();
         if let Some(a) = attrs {
-            debug_assert!(!a.is_empty());
+            debug_assert!(!a.0.is_empty());
             self.attrs.insert(hir_id.local_id, a);
         }
         let local = hir::Local { hir_id, init, pat, source, span: self.lower_span(span), ty: None };

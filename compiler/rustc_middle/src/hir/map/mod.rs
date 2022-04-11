@@ -601,7 +601,7 @@ impl<'hir> Map<'hir> {
         let krate = self.krate();
         for (owner, info) in krate.owners.iter_enumerated() {
             if let MaybeOwner::Owner(info) = info {
-                for (local_id, attrs) in info.attrs.map.iter() {
+                for (local_id, (attrs, _)) in info.attrs.map.iter() {
                     let id = HirId { owner, local_id: *local_id };
                     for a in *attrs {
                         visitor.visit_attribute(id, a)
@@ -961,11 +961,12 @@ impl<'hir> Map<'hir> {
     /// Given a node ID, gets a list of attributes associated with the AST
     /// corresponding to the node-ID.
     pub fn attrs(self, id: HirId) -> &'hir [ast::Attribute] {
-        self.tcx.hir_attrs(id.owner).get(id.local_id)
+        self.tcx.hir_attrs(id.owner).get(id.local_id).0
     }
 
     pub fn normal_attrs(self, id: HirId) -> &'hir [ast::Attribute] {
-        self.tcx.hir_normal_attrs(id.owner)
+        let (attrs, normal_attrs) = self.tcx.hir_attrs(id.owner).get(id.local_id);
+        normal_attrs.unwrap_or(attrs)
     }
 
     /// Gets the span of the definition of the specified HIR node.

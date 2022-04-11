@@ -241,6 +241,13 @@ impl Attribute {
         }
     }
 
+    pub fn is_normal(&self) -> bool {
+        match self.kind {
+            AttrKind::Normal(..) => true,
+            AttrKind::DocComment(..) => false,
+        }
+    }
+
     pub fn doc_str_and_comment_kind(&self) -> Option<(Symbol, CommentKind)> {
         match self.kind {
             AttrKind::DocComment(kind, data) => Some((data, kind)),

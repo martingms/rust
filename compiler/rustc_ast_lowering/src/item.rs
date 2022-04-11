@@ -569,7 +569,7 @@ impl<'hir> LoweringContext<'_, 'hir> {
                         let kind = hir::ItemKind::Use(path, hir::UseKind::Single);
                         let vis = this.rebuild_vis(&vis);
                         if let Some(attrs) = attrs {
-                            this.attrs.insert(hir::ItemLocalId::new(0), attrs);
+                            this.insert_attrs(hir::ItemLocalId::new(0), attrs);
                         }
 
                         let item = hir::Item {
@@ -644,7 +644,7 @@ impl<'hir> LoweringContext<'_, 'hir> {
                         let kind =
                             this.lower_use_tree(use_tree, &prefix, id, &mut vis, &mut ident, attrs);
                         if let Some(attrs) = attrs {
-                            this.attrs.insert(hir::ItemLocalId::new(0), attrs);
+                            this.insert_attrs(hir::ItemLocalId::new(0), attrs);
                         }
 
                         let item = hir::Item {

@@ -671,7 +671,7 @@ pub struct ParentedNode<'tcx> {
 /// Attributes owned by a HIR owner.
 #[derive(Debug)]
 pub struct AttributeMap<'tcx> {
-    pub map: SortedMap<ItemLocalId, &'tcx [Attribute]>,
+    pub map: SortedMap<ItemLocalId, (&'tcx [Attribute], Option<&'tcx [Attribute]>)>,
     pub hash: Fingerprint,
 }
 
@@ -680,8 +680,8 @@ impl<'tcx> AttributeMap<'tcx> {
         &AttributeMap { map: SortedMap::new(), hash: Fingerprint::ZERO };
 
     #[inline]
-    pub fn get(&self, id: ItemLocalId) -> &'tcx [Attribute] {
-        self.map.get(&id).copied().unwrap_or(&[])
+    pub fn get(&self, id: ItemLocalId) -> (&'tcx [Attribute], Option<&'tcx [Attribute]>) {
+        self.map.get(&id).copied().unwrap_or((&[], None))
     }
 }
 
