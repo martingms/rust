@@ -241,6 +241,7 @@ impl Attribute {
         }
     }
 
+    #[inline]
     pub fn is_normal(&self) -> bool {
         match self.kind {
             AttrKind::Normal(..) => true,
