@@ -1222,7 +1222,7 @@ fn trait_def(tcx: TyCtxt<'_>, def_id: DefId) -> ty::TraitDef {
     let def_path_hash = tcx.def_path_hash(def_id);
 
     let must_implement_one_of = tcx
-        .get_attrs(def_id)
+        .get_normal_attrs(def_id)
         .iter()
         .find(|attr| attr.has_name(sym::rustc_must_implement_one_of))
         // Check that there are at least 2 arguments of `#[rustc_must_implement_one_of]`
@@ -2748,7 +2748,7 @@ fn linkage_by_name(tcx: TyCtxt<'_>, def_id: DefId, name: &str) -> Linkage {
 }
 
 fn codegen_fn_attrs(tcx: TyCtxt<'_>, id: DefId) -> CodegenFnAttrs {
-    let attrs = tcx.get_attrs(id);
+    let attrs = tcx.get_normal_attrs(id);
 
     let mut codegen_fn_attrs = CodegenFnAttrs::new();
     if tcx.should_inherit_track_caller(id) {

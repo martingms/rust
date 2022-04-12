@@ -231,7 +231,7 @@ impl AdtDefData {
             flags |= AdtFlags::HAS_CTOR;
         }
 
-        let attrs = tcx.get_attrs(did);
+        let attrs = tcx.get_normal_attrs(did);
         if tcx.sess.contains_name(&attrs, sym::fundamental) {
             flags |= AdtFlags::IS_FUNDAMENTAL;
         }

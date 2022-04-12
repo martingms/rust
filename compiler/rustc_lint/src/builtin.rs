@@ -2786,7 +2786,7 @@ impl ClashingExternDeclarations {
                 // bottleneck, this does just fine.
                 (
                     overridden_link_name,
-                    tcx.get_attrs(fi.def_id.to_def_id())
+                    tcx.get_normal_attrs(fi.def_id.to_def_id())
                         .iter()
                         .find(|at| at.has_name(sym::link_name))
                         .unwrap()

@@ -31,7 +31,7 @@ impl<'tcx> MirPass<'tcx> for SanityCheck {
             debug!("running rustc_peek::SanityCheck on {}", tcx.def_path_str(def_id));
         }
 
-        let attributes = tcx.get_attrs(def_id);
+        let attributes = tcx.get_normal_attrs(def_id);
         let param_env = tcx.param_env(def_id);
         let move_data = MoveData::gather_moves(body, tcx, param_env).unwrap();
         let mdpe = MoveDataParamEnv { move_data, param_env };

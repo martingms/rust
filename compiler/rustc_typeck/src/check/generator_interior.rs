@@ -591,7 +591,7 @@ fn check_must_not_suspend_def(
     hir_id: HirId,
     data: SuspendCheckData<'_, '_>,
 ) -> bool {
-    for attr in tcx.get_attrs(def_id).iter() {
+    for attr in tcx.get_normal_attrs(def_id).iter() {
         if attr.has_name(sym::must_not_suspend) {
             tcx.struct_span_lint_hir(
                 rustc_session::lint::builtin::MUST_NOT_SUSPEND,

@@ -569,7 +569,7 @@ impl<T> Trait<T> for X {
                 }
             }
             TargetFeatureCast(def_id) => {
-                let attrs = self.get_attrs(*def_id);
+                let attrs = self.get_normal_attrs(*def_id);
                 let target_spans = attrs
                     .iter()
                     .filter(|attr| attr.has_name(sym::target_feature))

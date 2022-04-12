@@ -1744,7 +1744,7 @@ impl ReprOptions {
             field_shuffle_seed ^= user_seed;
         }
 
-        for attr in tcx.get_attrs(did).iter() {
+        for attr in tcx.get_normal_attrs(did).iter() {
             for r in attr::find_repr_attrs(&tcx.sess, attr) {
                 flags.insert(match r {
                     attr::ReprC => ReprFlags::IS_C,
@@ -2120,9 +2120,17 @@ impl<'tcx> TyCtxt<'tcx> {
         }
     }
 
+    pub fn get_normal_attrs(self, did: DefId) -> Attributes<'tcx> {
+        if let Some(did) = did.as_local() {
+            self.hir().normal_attrs(self.hir().local_def_id_to_hir_id(did))
+        } else {
+            self.item_attrs(did)
+        }
+    }
+
     /// Determines whether an item is annotated with an attribute.
     pub fn has_attr(self, did: DefId, attr: Symbol) -> bool {
-        self.sess.contains_name(&self.get_attrs(did), attr)
+        self.sess.contains_name(&self.get_normal_attrs(did), attr)
     }
 
     /// Returns `true` if this is an `auto trait`.

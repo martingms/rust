@@ -407,7 +407,7 @@ impl<'a, 'tcx> FnCtxt<'a, 'tcx> {
             self.has_only_self_parameter(m)
                 && self
                     .tcx
-                    .get_attrs(m.def_id)
+                    .get_normal_attrs(m.def_id)
                     .iter()
                     // This special internal attribute is used to permit
                     // "identity-like" conversion methods to be suggested here.

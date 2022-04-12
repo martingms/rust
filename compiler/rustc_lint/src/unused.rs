@@ -303,7 +303,7 @@ impl<'tcx> LateLintPass<'tcx> for UnusedResults {
             descr_pre_path: &str,
             descr_post_path: &str,
         ) -> bool {
-            for attr in cx.tcx.get_attrs(def_id).iter() {
+            for attr in cx.tcx.get_normal_attrs(def_id).iter() {
                 if attr.has_name(sym::must_use) {
                     cx.struct_span_lint(UNUSED_MUST_USE, span, |lint| {
                         let msg = format!(

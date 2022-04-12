@@ -1985,7 +1985,7 @@ impl<'a, 'tcx> LifetimeContext<'a, 'tcx> {
                                 // lifetimes in `derive` expansions don't count (Issue #53738)
                                 if self
                                     .tcx
-                                    .get_attrs(def_id.to_def_id())
+                                    .get_normal_attrs(def_id.to_def_id())
                                     .iter()
                                     .any(|attr| attr.has_name(sym::automatically_derived))
                                 {

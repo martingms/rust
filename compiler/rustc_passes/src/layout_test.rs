@@ -27,7 +27,7 @@ impl<'tcx> ItemLikeVisitor<'tcx> for LayoutTest<'tcx> {
             | ItemKind::Enum(..)
             | ItemKind::Struct(..)
             | ItemKind::Union(..) => {
-                for attr in self.tcx.get_attrs(item.def_id.to_def_id()).iter() {
+                for attr in self.tcx.get_normal_attrs(item.def_id.to_def_id()).iter() {
                     if attr.has_name(sym::rustc_layout) {
                         self.dump_layout_of(item.def_id, item, attr);
                     }

@@ -1037,7 +1037,7 @@ fn check_impl_items_against_trait<'tcx>(
         if let Some(missing_items) = must_implement_one_of {
             let impl_span = tcx.sess.source_map().guess_head_span(full_impl_span);
             let attr_span = tcx
-                .get_attrs(impl_trait_ref.def_id)
+                .get_normal_attrs(impl_trait_ref.def_id)
                 .iter()
                 .find(|attr| attr.has_name(sym::rustc_must_implement_one_of))
                 .map(|attr| attr.span);
@@ -1140,7 +1140,7 @@ pub fn check_simd(tcx: TyCtxt<'_>, sp: Span, def_id: LocalDefId) {
 pub(super) fn check_packed(tcx: TyCtxt<'_>, sp: Span, def: ty::AdtDef<'_>) {
     let repr = def.repr();
     if repr.packed() {
-        for attr in tcx.get_attrs(def.did()).iter() {
+        for attr in tcx.get_normal_attrs(def.did()).iter() {
             for r in attr::find_repr_attrs(&tcx.sess, attr) {
                 if let attr::ReprPacked(pack) = r
                     && let Some(repr_pack) = repr.pack
@@ -1304,7 +1304,7 @@ fn check_enum<'tcx>(
     def.destructor(tcx); // force the destructor to be evaluated
 
     if vs.is_empty() {
-        let attributes = tcx.get_attrs(def_id.to_def_id());
+        let attributes = tcx.get_normal_attrs(def_id.to_def_id());
         if let Some(attr) = tcx.sess.find_by_name(&attributes, sym::repr) {
             struct_span_err!(
                 tcx.sess,

@@ -1156,7 +1156,7 @@ pub fn normalize_opaque_types<'tcx>(
 
 /// Determines whether an item is annotated with `doc(hidden)`.
 pub fn is_doc_hidden(tcx: TyCtxt<'_>, def_id: DefId) -> bool {
-    tcx.get_attrs(def_id)
+    tcx.get_normal_attrs(def_id)
         .iter()
         .filter_map(|attr| if attr.has_name(sym::doc) { attr.meta_item_list() } else { None })
         .any(|items| items.iter().any(|item| item.has_name(sym::hidden)))

@@ -329,7 +329,7 @@ pub fn from_fn_attrs<'ll, 'tcx>(
     ) {
         let span = cx
             .tcx
-            .get_attrs(instance.def_id())
+            .get_normal_attrs(instance.def_id())
             .iter()
             .find(|a| a.has_name(rustc_span::sym::target_feature))
             .map_or_else(|| cx.tcx.def_span(instance.def_id()), |a| a.span);

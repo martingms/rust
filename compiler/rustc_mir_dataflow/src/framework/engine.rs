@@ -333,7 +333,7 @@ struct RustcMirAttrs {
 
 impl RustcMirAttrs {
     fn parse(tcx: TyCtxt<'_>, def_id: DefId) -> Result<Self, ()> {
-        let attrs = tcx.get_attrs(def_id);
+        let attrs = tcx.get_normal_attrs(def_id);
 
         let mut result = Ok(());
         let mut ret = RustcMirAttrs::default();

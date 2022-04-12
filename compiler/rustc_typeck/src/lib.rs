@@ -296,7 +296,7 @@ fn check_main_fn_ty(tcx: TyCtxt<'_>, main_def_id: DefId) {
         error = true;
     }
 
-    for attr in tcx.get_attrs(main_def_id) {
+    for attr in tcx.get_normal_attrs(main_def_id) {
         if attr.has_name(sym::track_caller) {
             tcx.sess
                 .struct_span_err(

@@ -1214,7 +1214,7 @@ impl<'cx, 'tcx> SelectionContext<'cx, 'tcx> {
         if let ImplCandidate(def_id) = candidate {
             if let ty::ImplPolarity::Reservation = tcx.impl_polarity(def_id) {
                 if let Some(intercrate_ambiguity_clauses) = &mut self.intercrate_ambiguity_causes {
-                    let attrs = tcx.get_attrs(def_id);
+                    let attrs = tcx.get_normal_attrs(def_id);
                     let attr = tcx.sess.find_by_name(&attrs, sym::rustc_reservation_impl);
                     let value = attr.and_then(|a| a.value_str());
                     if let Some(value) = value {

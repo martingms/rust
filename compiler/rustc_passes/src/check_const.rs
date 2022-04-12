@@ -190,7 +190,7 @@ impl<'tcx> CheckConstVisitor<'tcx> {
 
             // However, we cannot allow stable `const fn`s to use unstable features without an explicit
             // opt-in via `rustc_allow_const_fn_unstable`.
-            attr::rustc_allow_const_fn_unstable(&tcx.sess, &tcx.get_attrs(def_id))
+            attr::rustc_allow_const_fn_unstable(&tcx.sess, &tcx.get_normal_attrs(def_id))
                 .any(|name| name == feature_gate)
         };
 

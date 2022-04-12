@@ -261,7 +261,7 @@ impl<'tcx> Queries<'tcx> {
     fn check_for_rustc_errors_attr(tcx: TyCtxt<'_>) {
         let Some((def_id, _)) = tcx.entry_fn(()) else { return };
 
-        let attrs = &*tcx.get_attrs(def_id);
+        let attrs = &*tcx.get_normal_attrs(def_id);
         let attrs = attrs.iter().filter(|attr| attr.has_name(sym::rustc_error));
         for attr in attrs {
             match attr.meta_item_list() {

@@ -179,7 +179,7 @@ impl<'tcx> OnUnimplementedDirective {
     }
 
     pub fn of_item(tcx: TyCtxt<'tcx>, item_def_id: DefId) -> Result<Option<Self>, ErrorGuaranteed> {
-        let attrs = tcx.get_attrs(item_def_id);
+        let attrs = tcx.get_normal_attrs(item_def_id);
 
         let Some(attr) = tcx.sess.find_by_name(&attrs, sym::rustc_on_unimplemented) else {
             return Ok(None);
