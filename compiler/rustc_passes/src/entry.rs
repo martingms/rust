@@ -76,7 +76,7 @@ fn entry_fn(tcx: TyCtxt<'_>, (): ()) -> Option<(DefId, EntryFnType)> {
 // Beware, this is duplicated in `librustc_builtin_macros/test_harness.rs`
 // (with `ast::Item`), so make sure to keep them in sync.
 fn entry_point_type(ctxt: &EntryContext<'_, '_>, item: &Item<'_>, at_root: bool) -> EntryPointType {
-    let attrs = ctxt.map.attrs(item.hir_id());
+    let attrs = ctxt.map.normal_attrs(item.hir_id());
     if ctxt.session.contains_name(attrs, sym::start) {
         EntryPointType::Start
     } else if ctxt.session.contains_name(attrs, sym::rustc_main) {
@@ -102,7 +102,7 @@ fn find_item(item: &Item<'_>, ctxt: &mut EntryContext<'_, '_>, at_root: bool) {
     match entry_point_type(ctxt, item, at_root) {
         EntryPointType::None => (),
         _ if !matches!(item.kind, ItemKind::Fn(..)) => {
-            let attrs = ctxt.map.attrs(item.hir_id());
+            let attrs = ctxt.map.normal_attrs(item.hir_id());
             if let Some(attr) = ctxt.session.find_by_name(attrs, sym::start) {
                 throw_attr_err(&ctxt.session, attr.span, "start");
             }
