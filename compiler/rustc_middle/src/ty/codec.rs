@@ -228,7 +228,8 @@ fn decode_arena_allocable_slice<'tcx, D, T: ArenaAllocatable<'tcx> + Decodable<D
 where
     D: TyDecoder<'tcx>,
 {
-    decoder.tcx().arena.alloc_from_iter(<Vec<T> as Decodable<D>>::decode(decoder))
+    let len = decoder.read_usize();
+    decoder.tcx().arena.alloc_from_iter((0..len).map::<T, _>(|_| Decodable::decode(decoder)))
 }
 
 impl<'tcx, D: TyDecoder<'tcx>> Decodable<D> for Ty<'tcx> {
@@ -360,9 +361,10 @@ impl<'tcx, D: TyDecoder<'tcx>> Decodable<D> for ty::Const<'tcx> {
 
 impl<'tcx, D: TyDecoder<'tcx>> RefDecodable<'tcx, D> for [ty::ValTree<'tcx>] {
     fn decode(decoder: &mut D) -> &'tcx Self {
-        decoder.tcx().arena.alloc_from_iter(
-            (0..decoder.read_usize()).map(|_| Decodable::decode(decoder)).collect::<Vec<_>>(),
-        )
+        decoder
+            .tcx()
+            .arena
+            .alloc_from_iter((0..decoder.read_usize()).map(|_| Decodable::decode(decoder)))
     }
 }
 
@@ -380,25 +382,28 @@ impl<'tcx, D: TyDecoder<'tcx>> Decodable<D> for AdtDef<'tcx> {
 
 impl<'tcx, D: TyDecoder<'tcx>> RefDecodable<'tcx, D> for [(ty::Predicate<'tcx>, Span)] {
     fn decode(decoder: &mut D) -> &'tcx Self {
-        decoder.tcx().arena.alloc_from_iter(
-            (0..decoder.read_usize()).map(|_| Decodable::decode(decoder)).collect::<Vec<_>>(),
-        )
+        decoder
+            .tcx()
+            .arena
+            .alloc_from_iter((0..decoder.read_usize()).map(|_| Decodable::decode(decoder)))
     }
 }
 
 impl<'tcx, D: TyDecoder<'tcx>> RefDecodable<'tcx, D> for [thir::abstract_const::Node<'tcx>] {
     fn decode(decoder: &mut D) -> &'tcx Self {
-        decoder.tcx().arena.alloc_from_iter(
-            (0..decoder.read_usize()).map(|_| Decodable::decode(decoder)).collect::<Vec<_>>(),
-        )
+        decoder
+            .tcx()
+            .arena
+            .alloc_from_iter((0..decoder.read_usize()).map(|_| Decodable::decode(decoder)))
     }
 }
 
 impl<'tcx, D: TyDecoder<'tcx>> RefDecodable<'tcx, D> for [thir::abstract_const::NodeId] {
     fn decode(decoder: &mut D) -> &'tcx Self {
-        decoder.tcx().arena.alloc_from_iter(
-            (0..decoder.read_usize()).map(|_| Decodable::decode(decoder)).collect::<Vec<_>>(),
-        )
+        decoder
+            .tcx()
+            .arena
+            .alloc_from_iter((0..decoder.read_usize()).map(|_| Decodable::decode(decoder)))
     }
 }
 
