@@ -1,6 +1,6 @@
 // Not in interpret to make sure we do not use private implementation details
 
-use std::convert::TryFrom;
+use std::convert::{identity, TryFrom};
 
 use rustc_hir::Mutability;
 use rustc_middle::ty::{self, TyCtxt};
@@ -72,10 +72,9 @@ fn const_to_valtree_inner<'tcx>(
         });
         // For enums, we preped their variant index before the variant's fields so we can figure out
         // the variant again when just seeing a valtree.
-        let branches = variant.into_iter().chain(fields);
-        Some(ty::ValTree::Branch(
-            ecx.tcx.arena.alloc_from_iter(branches.collect::<Option<Vec<_>>>()?),
-        ))
+        let branches =
+            ecx.tcx.arena.alloc_from_iter(variant.into_iter().chain(fields).filter_map(identity));
+        if !branches.is_empty() { Some(ty::ValTree::Branch(branches)) } else { None }
     };
     match place.layout.ty.kind() {
         ty::FnDef(..) => Some(ty::ValTree::zst()),
