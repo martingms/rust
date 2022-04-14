@@ -306,6 +306,8 @@ impl<'tcx, D: TyDecoder<'tcx>> Decodable<D> for ty::Region<'tcx> {
 
 impl<'tcx, D: TyDecoder<'tcx>> Decodable<D> for CanonicalVarInfos<'tcx> {
     fn decode(decoder: &mut D) -> Self {
+        // FIXME(mg): Can possibly avoid this? Allocate in arena instead?
+        // All users of intern_canonical_var_infos end up collect()-ing
         let len = decoder.read_usize();
         let interned: Vec<CanonicalVarInfo<'tcx>> =
             (0..len).map(|_| Decodable::decode(decoder)).collect();
